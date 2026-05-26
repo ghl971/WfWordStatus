@@ -115,6 +115,11 @@ body::after{content:'';position:fixed;inset:0;opacity:var(--noise-opacity);backg
 .nr:last-child{border-bottom:none}
 .nr:hover{background:rgba(var(--gold),.04)}
 .nr:hover .nt{color:rgb(var(--gold))}
+.nav-wrap{position:relative}
+.nav-dropdown{position:absolute;top:calc(100% + 8px);right:0;background:rgba(var(--bg-surface),.94);backdrop-filter:blur(16px) saturate(1.3);border:1px solid rgba(var(--gold),var(--border-gold-alpha));border-radius:12px;padding:6px;min-width:200px;display:none;z-index:100;box-shadow:0 8px 32px rgba(0,0,0,.3),var(--glow-gold-lg)}
+.nav-dropdown.open{display:block}
+.nav-dropdown-item{padding:10px 14px;cursor:pointer;border-radius:7px;color:rgb(var(--text-secondary));font-size:.88rem;transition:all .15s;white-space:nowrap}
+.nav-dropdown-item:hover{background:rgba(var(--gold),.1);color:rgb(var(--gold))}
 .nti{font-size:.7rem;font-family:'Sora','JetBrains Mono',monospace;white-space:nowrap;font-weight:500;display:flex;align-items:center;gap:4px;min-width:65px}
 .nti svg{width:8px;height:8px}
 .nt{font-size:.85rem;color:rgb(var(--text-secondary));transition:color .15s}
@@ -147,6 +152,12 @@ body::after{content:'';position:fixed;inset:0;opacity:var(--noise-opacity);backg
     <div class="hs">Warframe 实时看板</div>
   </div>
   <div class="hr">
+    <div class="nav-wrap">
+      <button class="tb" id="navIcon" aria-label="导航菜单">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="4" cy="4" r="1.5"/><circle cx="10" cy="4" r="1.5"/><circle cx="16" cy="4" r="1.5"/><circle cx="4" cy="10" r="1.5"/><circle cx="10" cy="10" r="1.5"/><circle cx="16" cy="10" r="1.5"/><circle cx="4" cy="16" r="1.5"/><circle cx="10" cy="16" r="1.5"/><circle cx="16" cy="16" r="1.5"/></svg>
+      </button>
+      <div class="nav-dropdown" id="navDropdown"></div>
+    </div>
     <button class="tb" id="themeBtn" aria-label="切换主题">
       <svg class="theme-sun" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="4"/><path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.93 4.93l1.41 1.41M13.66 13.66l1.41 1.41M4.93 15.07l1.41-1.41M13.66 6.34l1.41-1.41"/></svg>
       <svg class="theme-moon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M17.5 12.33A8.5 8.5 0 0 1 7.67 2.5 8.5 8.5 0 1 0 17.5 12.33Z"/></svg>
@@ -530,6 +541,20 @@ function toggleTheme(){applyTheme(document.documentElement.getAttribute('data-th
   const n=Date.now();
   document.querySelectorAll('[data-minutes]').forEach(el=>{el._dl=n+parseFloat(el.dataset.minutes)*60000});
   tick();setInterval(tick,1000);
+})();
+(function(){
+  var nav=document.getElementById('navDropdown'),icon=document.getElementById('navIcon');
+  document.querySelectorAll('.grid>.card').forEach(function(c){
+    var t=c.querySelector('.card-title-text');
+    if(!t)return;
+    var d=document.createElement('div');
+    d.className='nav-dropdown-item';
+    d.textContent=t.textContent;
+    d.addEventListener('click',function(e){e.stopPropagation();c.scrollIntoView({behavior:'smooth',block:'start'});nav.classList.remove('open')});
+    nav.appendChild(d)
+  });
+  icon.addEventListener('click',function(e){e.stopPropagation();nav.classList.toggle('open')});
+  document.addEventListener('click',function(){nav.classList.remove('open')});
 })();
 </script>
 </body>
